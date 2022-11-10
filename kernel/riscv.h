@@ -295,6 +295,14 @@ r_sp()
   return x;
 }
 
+static inline uint64
+r_fp()
+{
+  uint64 x;
+  asm volatile("mv %0, s0" : "=r" (x) );
+  return x;
+}
+
 // read and write tp, the thread pointer, which xv6 uses to hold
 // this core's hartid (core number), the index into cpus[].
 static inline uint64
@@ -356,6 +364,9 @@ typedef uint64 *pagetable_t; // 512 PTEs
 #define PTE_A (1L << 6) // accessed
 #endif
 #define PTE_C (1L << 8) // copy-on-write page
+
+
+
 
 // shift a physical address to the right place for a PTE.
 #define PA2PTE(pa) ((((uint64)pa) >> 12) << 10)

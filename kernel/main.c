@@ -34,7 +34,7 @@ main()
 #ifdef LAB_ALL
     pci_init();
     sockinit();
-#endif    
+#endif
     userinit();      // first user process
 #ifdef KCSAN
     kcsaninit();
