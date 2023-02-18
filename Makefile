@@ -263,9 +263,9 @@ UPROGS += \
 endif
 
 UEXTRA=
-ifeq ($(LAB),util)
+#ifeq ($(LAB),util)
 	UEXTRA += user/xargstest.sh
-endif
+#endif
 
 
 fs.img: mkfs/mkfs README $(UEXTRA) $(UPROGS)
