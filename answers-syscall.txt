@@ -1,0 +1,14 @@
+usertrap
+
+0xa, the id of the system call
+
+user mode
+
+lw	s2,0(zero)
+s2
+
+Address 0 is not mapped in the kernel virtual address
+The value of scause is 13, which indicates "Load page fault"
+
+name: initcode
+pid: 1
