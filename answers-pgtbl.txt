@@ -1,0 +1,7 @@
+Speed up trace() by sharing the mask
+
+Page 0 contains the text of the process
+Page 2 is a guard page and contains nothing
+Yes
+Page 3 is the user stack
+The reset pages are heap, trapframe, and trampoline
