@@ -1,0 +1,15 @@
+a2 holds 13
+
+The main does not call function f
+Neither does function f call function g
+
+678
+
+30
+
+HE110 World
+0x00726c64
+No
+
+The value in a2
+The printf uses a2 as the third argument, which is not set by the caller

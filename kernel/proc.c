@@ -166,9 +166,11 @@ freeproc(struct proc *p)
 {
   if(p->trapframe)
     kfree((void*)p->trapframe);
+#ifdef SOL_ALL
   if (p->user_shared_data) {
     kfree((void *) p->user_shared_data);
   }
+#endif
   p->trapframe = 0;
   if(p->pagetable)
     proc_freepagetable(p->pagetable, p->sz);
@@ -214,6 +216,7 @@ proc_pagetable(struct proc *p)
     return 0;
   }
 
+#ifdef SOL_ALL
   if (mappages(pagetable,
                USYSCALL,
                PGSIZE,
@@ -223,6 +226,7 @@ proc_pagetable(struct proc *p)
     uvmunmap(pagetable, TRAPFRAME, 1, 0);
     uvmfree(pagetable, 0);
   }
+#endif
 
   return pagetable;
 }
@@ -234,7 +238,9 @@ proc_freepagetable(pagetable_t pagetable, uint64 sz)
 {
   uvmunmap(pagetable, TRAMPOLINE, 1, 0);
   uvmunmap(pagetable, TRAPFRAME, 1, 0);
+#ifdef SOL_ALL
   uvmunmap(pagetable, USYSCALL, 1, 0);
+#endif
   uvmfree(pagetable, sz);
 }
 

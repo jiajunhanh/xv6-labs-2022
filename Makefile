@@ -205,7 +205,7 @@ UPROGS += \
 	$U/_stats
 endif
 
-ifeq ($(LAB),traps)
+ifeq ($(LAB),all)
 UPROGS += \
 	$U/_call\
 	$U/_bttest
