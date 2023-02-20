@@ -239,7 +239,7 @@ barrier: notxv6/barrier.c
 	gcc -o barrier -g -O2 $(XCFLAGS) notxv6/barrier.c -pthread
 endif
 
-ifeq ($(LAB),pgtbl)
+ifeq ($(LAB),all)
 UPROGS += \
 	$U/_pgtbltest
 endif
@@ -263,9 +263,9 @@ UPROGS += \
 endif
 
 UEXTRA=
-#ifeq ($(LAB),util)
+ifeq ($(LAB),all)
 	UEXTRA += user/xargstest.sh
-#endif
+endif
 
 
 fs.img: mkfs/mkfs README $(UEXTRA) $(UPROGS)
@@ -343,7 +343,9 @@ grade:
 	@echo $(MAKE) clean
 	@$(MAKE) clean || \
           (echo "'make clean' failed.  HINT: Do you have another running instance of xv6?" && exit 1)
-	./grade-lab-$(LAB) $(GRADEFLAGS)
+	./grade-lab-util $(GRADEFLAGS)
+	./grade-lab-syscall $(GRADEFLAGS)
+	./grade-lab-pgtbl $(GRADEFLAGS)
 
 ##
 ## FOR web handin

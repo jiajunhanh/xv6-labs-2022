@@ -1,7 +1,7 @@
 #include "kernel/types.h"
 #include "kernel/stat.h"
 #include "kernel/fcntl.h"
-#ifdef LAB_PGTBL
+#ifdef LAB_ALL
 #include "kernel/riscv.h"
 #include "kernel/memlayout.h"
 #endif
@@ -151,7 +151,7 @@ memcpy(void *dst, const void *src, uint n)
   return memmove(dst, src, n);
 }
 
-#ifdef LAB_PGTBL
+#ifdef LAB_ALL
 int
 ugetpid(void)
 {

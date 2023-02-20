@@ -106,5 +106,7 @@ struct proc {
   char name[16];               // Process name (debugging)
 
   int syscall_trace_mask;
+#ifdef SOL_ALL
   struct usyscall *user_shared_data;
+#endif
 };

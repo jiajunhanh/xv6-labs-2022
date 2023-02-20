@@ -70,7 +70,7 @@ sys_sleep(void)
 }
 
 
-#ifdef LAB_PGTBL
+#ifdef LAB_ALL
 int
 sys_pgaccess(void)
 {

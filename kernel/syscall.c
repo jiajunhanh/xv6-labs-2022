@@ -107,7 +107,7 @@ extern uint64 sys_sysinfo(void);
 #ifdef LAB_NET
 extern uint64 sys_connect(void);
 #endif
-#ifdef LAB_PGTBL
+#ifdef LAB_ALL
 extern uint64 sys_pgaccess(void);
 #endif
 
@@ -138,7 +138,7 @@ static uint64 (*syscalls[])(void) = {
 #ifdef LAB_NET
 [SYS_connect] sys_connect,
 #endif
-#ifdef LAB_PGTBL
+#ifdef LAB_ALL
 [SYS_pgaccess] sys_pgaccess,
 #endif
 [SYS_trace]   sys_trace,
@@ -172,7 +172,7 @@ static char* syscall_names[] = {
 #ifdef LAB_NET
 [SYS_connect] = "connect",
 #endif
-#ifdef LAB_PGTBL
+#ifdef LAB_ALL
 [SYS_pgaccess] = "pgaccess",
 #endif
 };
