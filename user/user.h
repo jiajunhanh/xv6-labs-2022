@@ -29,10 +29,12 @@ int sysinfo(struct sysinfo*);
 int connect(uint32, uint16, uint16);
 #endif
 #ifdef LAB_ALL
-int pgaccess(void *base, int len, void *mask);
+int pgaccess(void *, int, void *);
 // usyscall region
 int ugetpid(void);
 #endif
+int sigalarm(int, void (*)());
+int sigreturn(void);
 
 // ulib.c
 int stat(const char*, struct stat*);

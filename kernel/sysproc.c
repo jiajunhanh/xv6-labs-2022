@@ -74,7 +74,7 @@ sys_sleep(void)
 
 
 #ifdef LAB_ALL
-int
+uint64
 sys_pgaccess(void)
 {
   uint64 base;
@@ -133,5 +133,32 @@ sys_trace(void)
   int mask;
   argint(0, &mask);
   myproc()->syscall_trace_mask |= mask;
+  return 0;
+}
+
+uint64 sys_sigalarm(void) {
+  int alarm_interval;
+  uint64 handler;
+
+  argint(0, &alarm_interval);
+  argaddr(1, &handler);
+
+  if (alarm_interval < 0) {
+    return -1;
+  }
+
+  struct proc *p = myproc();
+  p->alarm_interval = (uint) alarm_interval;
+  p->previous_alarm_ticks = ticks;
+  p->alarm_handler = handler;
+
+  return 0;
+}
+
+uint64 sys_sigreturn(void) {
+  struct proc *p = myproc();
+  p->handling_alarm = 0;
+  memmove(p->trapframe, &p->alarm_trapframe, sizeof(p->alarm_trapframe));
+  usertrapret();
   return 0;
 }

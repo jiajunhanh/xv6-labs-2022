@@ -109,4 +109,9 @@ struct proc {
 #ifdef SOL_ALL
   struct usyscall *user_shared_data;
 #endif
+  uint alarm_interval;
+  uint previous_alarm_ticks;
+  uint64 alarm_handler;
+  uint handling_alarm;
+  struct trapframe alarm_trapframe;
 };
