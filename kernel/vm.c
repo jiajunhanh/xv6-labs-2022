@@ -5,6 +5,8 @@
 #include "riscv.h"
 #include "defs.h"
 #include "fs.h"
+#include "spinlock.h"
+#include "reference_count.h"
 
 /*
  * the kernel's page table.
@@ -14,6 +16,9 @@ pagetable_t kernel_pagetable;
 extern char etext[];  // kernel.ld sets this to end of kernel code.
 
 extern char trampoline[]; // trampoline.S
+
+extern struct reference_count
+    kmem_reference_counts[(PHYSTOP + PGSIZE) / PGSIZE];
 
 // Make a direct-map page table for the kernel.
 pagetable_t
@@ -307,23 +312,34 @@ uvmcopy(pagetable_t old, pagetable_t new, uint64 sz)
 {
   pte_t *pte;
   uint64 pa, i;
-  uint flags;
-  char *mem;
+  int flags;
 
   for(i = 0; i < sz; i += PGSIZE){
     if((pte = walk(old, i, 0)) == 0)
       panic("uvmcopy: pte should exist");
     if((*pte & PTE_V) == 0)
       panic("uvmcopy: page not present");
+
     pa = PTE2PA(*pte);
     flags = PTE_FLAGS(*pte);
-    if((mem = kalloc()) == 0)
-      goto err;
-    memmove(mem, (char*)pa, PGSIZE);
-    if(mappages(new, i, PGSIZE, (uint64)mem, flags) != 0){
-      kfree(mem);
+
+    if (flags & PTE_W) {
+      // copy-on-write
+      flags &= ~PTE_W;
+      flags |= PTE_C;
+      *pte &= ~PTE_W;
+      *pte |= PTE_C;
+    }
+
+    if (mappages(new, i, PGSIZE, pa, flags) != 0) {
       goto err;
     }
+
+    struct reference_count
+        *refcnt = &kmem_reference_counts[(uint64) pa / PGSIZE];
+    acquire(&refcnt->lock);
+    refcnt->cnt += 1;
+    release(&refcnt->lock);
   }
   return 0;
 
@@ -355,9 +371,21 @@ copyout(pagetable_t pagetable, uint64 dstva, char *src, uint64 len)
 
   while(len > 0){
     va0 = PGROUNDDOWN(dstva);
-    pa0 = walkaddr(pagetable, va0);
-    if(pa0 == 0)
+    if (va0 >= MAXVA)
       return -1;
+
+    pte_t *pte = walk(pagetable, va0, 0);
+    if (pte == 0 || (*pte & PTE_V) == 0 || (*pte & PTE_U) == 0) {
+      return -1;
+    }
+
+    if (*pte & PTE_C) {
+      int res = copy_on_write(pagetable, va0);
+      if (res < 0) return -1;
+      pte = walk(pagetable, va0, 0);
+    }
+
+    pa0 = PTE2PA(*pte);
     n = PGSIZE - (dstva - va0);
     if(n > len)
       n = len;
@@ -464,4 +492,32 @@ static void vmprint_impl(pagetable_t page_table, int depth) {
 void vmprint(pagetable_t page_table) {
   printf("page table %p\n", page_table);
   vmprint_impl(page_table, 0);
+}
+
+int copy_on_write(pagetable_t pagetable, uint64 va) {
+  pte_t *pte = walk(pagetable, va, 0);
+  if (pte == 0) {
+    return -1;
+  }
+  int flags = PTE_FLAGS(*pte);
+
+  if ((flags & PTE_C) == 0) {
+    return -1;
+  }
+
+  uint64 pa = PTE2PA(*pte);
+  void *mem = kalloc();
+  if (mem == 0) {
+    return -2;
+  }
+  memmove(mem, (void *) pa, PGSIZE);
+
+  flags &= ~PTE_C;
+  flags |= PTE_W;
+  uvmunmap(pagetable, va, 1, 1);
+  if (mappages(pagetable, va, PGSIZE, (uint64) mem, flags) < 0) {
+    panic("copy_on_write");
+  }
+
+  return 0;
 }

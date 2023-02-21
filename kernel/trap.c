@@ -16,6 +16,8 @@ void kernelvec();
 
 extern int devintr();
 
+static int handle_cow_page_fault();
+
 void
 trapinit(void)
 {
@@ -65,7 +67,7 @@ usertrap(void)
     intr_on();
 
     syscall();
-  } else if((which_dev = devintr()) != 0){
+  } else if (handle_cow_page_fault() == 0 || (which_dev = devintr()) != 0) {
     // ok
   } else {
     printf("usertrap(): unexpected scause %p pid=%d\n", r_scause(), p->pid);
@@ -230,3 +232,22 @@ devintr()
   }
 }
 
+static int handle_cow_page_fault() {
+  uint64 scause = r_scause();
+  // the virtual address is stored in stval
+  // after a store page fault
+  uint64 va = r_stval();
+  struct proc *p = myproc();
+
+  if (scause != 15 || va >= MAXVA) {
+    return -1;
+  }
+
+  va = PGROUNDDOWN(va);
+  int res = copy_on_write(p->pagetable, va);
+  if (res == -2) {
+    setkilled(myproc());
+    res = 0;
+  }
+  return res;
+}

@@ -14,7 +14,7 @@ sys_sysinfo(void)
   argaddr(0, &addr);
 
   struct sysinfo si;
-  si.freemem = free_memory_size();
+  si.freemem = free_kmem_size();
   si.nproc = process_numbers();
 
   return copyout(myproc()->pagetable, addr, (char *) &si, sizeof(si));

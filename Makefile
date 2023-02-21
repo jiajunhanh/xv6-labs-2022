@@ -175,6 +175,7 @@ mkfs/mkfs: mkfs/mkfs.c $K/fs.h $K/param.h
 UPROGS=\
 	$U/_alarmtest\
 	$U/_cat\
+	$U/_cowtest\
 	$U/_echo\
 	$U/_find\
 	$U/_forktest\
@@ -208,8 +209,8 @@ endif
 
 ifeq ($(LAB),all)
 UPROGS += \
-	$U/_call\
-	$U/_bttest
+#	$U/_call\
+#	$U/_bttest
 endif
 
 ifeq ($(LAB),lazy)
@@ -348,6 +349,7 @@ grade:
 	./grade-lab-syscall $(GRADEFLAGS)
 	./grade-lab-pgtbl $(GRADEFLAGS)
 	./grade-lab-traps $(GRADEFLAGS)
+	./grade-lab-cow $(GRADEFLAGS)
 
 ##
 ## FOR web handin

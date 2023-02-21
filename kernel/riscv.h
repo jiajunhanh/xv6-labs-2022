@@ -355,6 +355,7 @@ typedef uint64 *pagetable_t; // 512 PTEs
 #ifdef SOL_ALL
 #define PTE_A (1L << 6) // accessed
 #endif
+#define PTE_C (1L << 8) // copy-on-write page
 
 // shift a physical address to the right place for a PTE.
 #define PA2PTE(pa) ((((uint64)pa) >> 12) << 10)

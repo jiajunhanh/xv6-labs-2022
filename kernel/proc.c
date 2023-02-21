@@ -170,12 +170,13 @@ freeproc(struct proc *p)
 {
   if(p->trapframe)
     kfree((void*)p->trapframe);
+  p->trapframe = 0;
 #ifdef SOL_ALL
   if (p->user_shared_data) {
     kfree((void *) p->user_shared_data);
   }
+  p->user_shared_data = 0;
 #endif
-  p->trapframe = 0;
   if(p->pagetable)
     proc_freepagetable(p->pagetable, p->sz);
   p->pagetable = 0;
@@ -229,6 +230,7 @@ proc_pagetable(struct proc *p)
     uvmunmap(pagetable, TRAMPOLINE, 1, 0);
     uvmunmap(pagetable, TRAPFRAME, 1, 0);
     uvmfree(pagetable, 0);
+    return 0;
   }
 #endif
 
@@ -329,6 +331,11 @@ fork(void)
   }
   np->sz = p->sz;
   np->syscall_trace_mask = p->syscall_trace_mask;
+  np->alarm_interval = p->alarm_interval;
+  np->previous_alarm_ticks = p->previous_alarm_ticks;
+  np->alarm_handler = p->alarm_handler;
+  np->handling_alarm = p->handling_alarm;
+  np->alarm_trapframe = p->alarm_trapframe;
 
   // copy saved user registers.
   *(np->trapframe) = *(p->trapframe);
