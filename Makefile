@@ -350,6 +350,7 @@ grade:
 	./grade-lab-pgtbl $(GRADEFLAGS)
 	./grade-lab-traps $(GRADEFLAGS)
 	./grade-lab-cow $(GRADEFLAGS)
+	./grade-lab-thread $(GRADEFLAGS)
 
 ##
 ## FOR web handin
