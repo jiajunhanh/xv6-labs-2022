@@ -223,7 +223,7 @@ UPROGS += \
 	$U/_cowtest
 endif
 
-ifeq ($(LAB),thread)
+ifeq ($(LAB),all)
 UPROGS += \
 	$U/_uthread
 
