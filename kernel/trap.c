@@ -207,7 +207,7 @@ devintr()
     } else if(irq == VIRTIO0_IRQ){
       virtio_disk_intr();
     }
-#ifdef LAB_NET
+#ifdef LAB_ALL
     else if(irq == E1000_IRQ){
       e1000_intr();
     }

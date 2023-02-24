@@ -36,7 +36,7 @@ kvmmake(void)
   // virtio mmio disk interface
   kvmmap(kpgtbl, VIRTIO0, VIRTIO0, PGSIZE, PTE_R | PTE_W);
 
-#ifdef LAB_NET
+#ifdef LAB_ALL
   // PCI-E ECAM (configuration space), for pci.c
   kvmmap(kpgtbl, 0x30000000L, 0x30000000L, 0x10000000, PTE_R | PTE_W);
 

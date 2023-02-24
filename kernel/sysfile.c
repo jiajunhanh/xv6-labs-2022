@@ -505,7 +505,7 @@ sys_pipe(void)
 }
 
 
-#ifdef LAB_NET
+#ifdef LAB_ALL
 int
 sys_connect(void)
 {

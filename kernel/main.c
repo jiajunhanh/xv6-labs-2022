@@ -31,7 +31,7 @@ main()
     iinit();         // inode table
     fileinit();      // file table
     virtio_disk_init(); // emulated hard disk
-#ifdef LAB_NET
+#ifdef LAB_ALL
     pci_init();
     sockinit();
 #endif    

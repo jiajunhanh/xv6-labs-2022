@@ -52,7 +52,7 @@ OBJS += \
 endif
 
 
-ifeq ($(LAB),net)
+ifeq ($(LAB),all)
 OBJS += \
 	$K/e1000.o \
 	$K/net.o \
@@ -101,7 +101,7 @@ CFLAGS += -ffreestanding -fno-common -nostdlib -mno-relax
 CFLAGS += -I.
 CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
 
-ifeq ($(LAB),net)
+ifeq ($(LAB),all)
 CFLAGS += -DNET_TESTS_PORT=$(SERVERPORT)
 endif
 
@@ -259,7 +259,7 @@ endif
 
 
 
-ifeq ($(LAB),net)
+ifeq ($(LAB),all)
 UPROGS += \
 	$U/_nettests
 endif
@@ -304,7 +304,7 @@ QEMUOPTS += -global virtio-mmio.force-legacy=false
 QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
-ifeq ($(LAB),net)
+ifeq ($(LAB),all)
 QEMUOPTS += -netdev user,id=net0,hostfwd=udp::$(FWDPORT)-:2000 -object filter-dump,id=net0,netdev=net0,file=packets.pcap
 QEMUOPTS += -device e1000,netdev=net0,bus=pcie.0
 endif
@@ -319,7 +319,7 @@ qemu-gdb: $K/kernel .gdbinit fs.img
 	@echo "*** Now run 'gdb' in another window." 1>&2
 	$(QEMU) $(QEMUOPTS) -S $(QEMUGDB)
 
-ifeq ($(LAB),net)
+ifeq ($(LAB),all)
 # try to generate a unique port for the echo server
 SERVERPORT = $(shell expr `id -u` % 5000 + 25099)
 
@@ -351,6 +351,7 @@ grade:
 	./grade-lab-traps $(GRADEFLAGS)
 	./grade-lab-cow $(GRADEFLAGS)
 	./grade-lab-thread $(GRADEFLAGS)
+	./grade-lab-net $(GRADEFLAGS)
 
 ##
 ## FOR web handin

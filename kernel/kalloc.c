@@ -102,7 +102,13 @@ kalloc(void)
 
   if (r) {
     memset((char *) r, 5, PGSIZE); // fill with junk
-    kmem_reference_counts[(uint64) r / PGSIZE].cnt = 1;
+    struct reference_count *refcnt = &kmem_reference_counts[(uint64) r / PGSIZE];
+    acquire(&refcnt->lock);
+    if (refcnt->cnt != 0) {
+      panic("kalloc: cnt != 0");
+    }
+    refcnt->cnt = 1;
+    release(&refcnt->lock);
   }
 
   return (void*)r;

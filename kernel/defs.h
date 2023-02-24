@@ -9,7 +9,7 @@ struct sleeplock;
 struct stat;
 struct superblock;
 struct sysinfo;
-#ifdef LAB_NET
+#ifdef LAB_ALL
 struct mbuf;
 struct sock;
 #endif
@@ -222,7 +222,7 @@ int             snprintf(char*, int, char*, ...);
 void            kcsaninit();
 #endif
 
-#ifdef LAB_NET
+#ifdef LAB_ALL
 // pci.c
 void            pci_init();
 

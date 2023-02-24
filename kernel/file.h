@@ -1,5 +1,5 @@
 struct file {
-#ifdef LAB_NET
+#ifdef LAB_ALL
   enum { FD_NONE, FD_PIPE, FD_INODE, FD_DEVICE, FD_SOCK } type;
 #else
   enum { FD_NONE, FD_PIPE, FD_INODE, FD_DEVICE } type;
@@ -9,7 +9,7 @@ struct file {
   char writable;
   struct pipe *pipe; // FD_PIPE
   struct inode *ip;  // FD_INODE and FD_DEVICE
-#ifdef LAB_NET
+#ifdef LAB_ALL
   struct sock *sock; // FD_SOCK
 #endif
   uint off;          // FD_INODE
