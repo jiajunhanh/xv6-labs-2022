@@ -7,7 +7,6 @@
 #include "spinlock.h"
 #include "proc.h"
 #include "fs.h"
-#include "reference_count.h"
 
 /*
  * the kernel's page table.
@@ -18,8 +17,7 @@ extern char etext[];  // kernel.ld sets this to end of kernel code.
 
 extern char trampoline[]; // trampoline.S
 
-extern struct reference_count
-    kmem_reference_counts[(PHYSTOP + PGSIZE) / PGSIZE];
+extern uint kmem_reference_counts[(PHYSTOP + PGSIZE) / PGSIZE];
 
 // Make a direct-map page table for the kernel.
 pagetable_t
@@ -346,11 +344,8 @@ uvmcopy(pagetable_t old, pagetable_t new, uint64 sz)
       goto err;
     }
 
-    struct reference_count
-        *refcnt = &kmem_reference_counts[(uint64) pa / PGSIZE];
-    acquire(&refcnt->lock);
-    refcnt->cnt += 1;
-    release(&refcnt->lock);
+    uint *refcnt = &kmem_reference_counts[(uint64) pa / PGSIZE];
+    __sync_fetch_and_add(refcnt, 1);
   }
   return 0;
 

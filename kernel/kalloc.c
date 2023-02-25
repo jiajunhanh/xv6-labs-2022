@@ -8,7 +8,6 @@
 #include "spinlock.h"
 #include "riscv.h"
 #include "defs.h"
-#include "reference_count.h"
 
 void freerange(void *pa_start, void *pa_end);
 
@@ -24,16 +23,14 @@ struct {
   struct run *freelist;
 } kmem;
 
-struct reference_count kmem_reference_counts[(PHYSTOP + PGSIZE) / PGSIZE];
+uint kmem_reference_counts[(PHYSTOP + PGSIZE) / PGSIZE];
 
 void
 kinit()
 {
   initlock(&kmem.lock, "kmem");
   for (int i = 0; i < (PHYSTOP + PGSIZE) / PGSIZE; ++i) {
-    struct reference_count *refctn = &kmem_reference_counts[i];
-    initlock(&refctn->lock, "reference_count");
-    refctn->cnt = 1;
+    kmem_reference_counts[i] = 1;
   }
   freerange(end, (void*)PHYSTOP);
 }
@@ -59,21 +56,14 @@ kfree(void *pa)
   if(((uint64)pa % PGSIZE) != 0 || (char*)pa < end || (uint64)pa >= PHYSTOP)
     panic("kfree");
 
-  struct reference_count *refcnt = &kmem_reference_counts[(uint64) pa / PGSIZE];
+  uint *refcnt = &kmem_reference_counts[(uint64) pa / PGSIZE];
 
-  acquire(&refcnt->lock);
-
-  if (refcnt->cnt == 0) {
-    panic("kfree: cnt == 0");
-  }
-  refcnt->cnt -= 1;
-
-  if (refcnt->cnt) {
-    release(&refcnt->lock);
+  if (__sync_sub_and_fetch(refcnt, 1)) {
+    if (*refcnt + 1 == 0) {
+      panic("kfree: cnt == 0");
+    }
     return;
   }
-
-  release(&refcnt->lock);
 
   // Fill with junk to catch dangling refs.
   memset(pa, 1, PGSIZE);
@@ -102,13 +92,10 @@ kalloc(void)
 
   if (r) {
     memset((char *) r, 5, PGSIZE); // fill with junk
-    struct reference_count *refcnt = &kmem_reference_counts[(uint64) r / PGSIZE];
-    acquire(&refcnt->lock);
-    if (refcnt->cnt != 0) {
+    uint *refcnt = &kmem_reference_counts[(uint64) r / PGSIZE];
+    if (__sync_fetch_and_add(refcnt, 1)) {
       panic("kalloc: cnt != 0");
     }
-    refcnt->cnt = 1;
-    release(&refcnt->lock);
   }
 
   return (void*)r;
