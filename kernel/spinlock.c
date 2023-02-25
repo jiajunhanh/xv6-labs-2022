@@ -8,7 +8,7 @@
 #include "proc.h"
 #include "defs.h"
 
-#ifdef LAB_LOCK
+#ifdef LAB_ALL
 #define NLOCK 500
 
 static struct spinlock *locks[NLOCK];
@@ -49,7 +49,7 @@ initlock(struct spinlock *lk, char *name)
   lk->name = name;
   lk->locked = 0;
   lk->cpu = 0;
-#ifdef LAB_LOCK
+#ifdef LAB_ALL
   lk->nts = 0;
   lk->n = 0;
   findslot(lk);
@@ -65,7 +65,7 @@ acquire(struct spinlock *lk)
   if(holding(lk))
     panic("acquire");
 
-#ifdef LAB_LOCK
+#ifdef LAB_ALL
     __sync_fetch_and_add(&(lk->n), 1);
 #endif
 
@@ -74,7 +74,7 @@ acquire(struct spinlock *lk)
   //   s1 = &lk->locked
   //   amoswap.w.aq a5, a5, (s1)
   while(__sync_lock_test_and_set(&lk->locked, 1) != 0) {
-#ifdef LAB_LOCK
+#ifdef LAB_ALL
     __sync_fetch_and_add(&(lk->nts), 1);
 #else
    ;
@@ -174,7 +174,7 @@ lockfree_read4(int *addr) {
   return val;
 }
 
-#ifdef LAB_LOCK
+#ifdef LAB_ALL
 int
 snprint_lock(char *buf, int sz, struct spinlock *lk)
 {

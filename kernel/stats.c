@@ -37,7 +37,7 @@ statsread(int user_dst, uint64 dst, int n)
 #ifdef LAB_PGTBL
     stats.sz = statscopyin(stats.buf, BUFSZ);
 #endif
-#ifdef LAB_LOCK
+#ifdef LAB_ALL
     stats.sz = statslock(stats.buf, BUFSZ);
 #endif
   }

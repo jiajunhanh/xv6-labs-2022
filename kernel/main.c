@@ -12,7 +12,7 @@ main()
 {
   if(cpuid() == 0){
     consoleinit();
-#if defined(LAB_LOCK)
+#if defined(LAB_ALL)
     statsinit();
 #endif
     printfinit();
