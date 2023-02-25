@@ -295,7 +295,7 @@ ilock(struct inode *ip)
   struct buf *bp;
   struct dinode *dip;
 
-  if(ip == 0 || atomic_read4(&ip->ref) < 1)
+  if(ip == 0 || lockfree_read4(&ip->ref) < 1)
     panic("ilock");
 
   acquiresleep(&ip->lock);
@@ -320,7 +320,7 @@ ilock(struct inode *ip)
 void
 iunlock(struct inode *ip)
 {
-  if(ip == 0 || !holdingsleep(&ip->lock) || atomic_read4(&ip->ref) < 1)
+  if(ip == 0 || !holdingsleep(&ip->lock) || lockfree_read4(&ip->ref) < 1)
     panic("iunlock");
 
   releasesleep(&ip->lock);
