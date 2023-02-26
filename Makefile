@@ -352,6 +352,7 @@ grade:
 	./grade-lab-cow $(GRADEFLAGS)
 	./grade-lab-thread $(GRADEFLAGS)
 	./grade-lab-net $(GRADEFLAGS)
+	./grade-lab-lock $(GRADEFLAGS)
 
 ##
 ## FOR web handin
