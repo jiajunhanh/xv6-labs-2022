@@ -21,7 +21,7 @@ struct run {
 struct {
   struct spinlock lock;
   struct run *freelist;
-  char lock_name[16];
+  char lock_name[6];
 } kmem[NCPU];
 
 uint kmem_reference_counts[(PHYSTOP + PGSIZE) / PGSIZE];
@@ -30,13 +30,7 @@ void
 kinit()
 {
   for (int i = 0; i < NCPU; ++i) {
-    int offset = snprintf(kmem[i].lock_name, 15, "kmem%d", i);
-
-    if (offset >= 16) {
-      panic("kinit");
-    }
-
-    kmem[i].lock_name[offset] = 0;
+    snprintf(kmem[i].lock_name, 5, "kmem%d", i);
     initlock(&kmem[i].lock, kmem[i].lock_name);
   }
 

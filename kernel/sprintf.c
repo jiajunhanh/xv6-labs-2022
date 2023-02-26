@@ -19,7 +19,7 @@ sputc(char *s, char c)
 }
 
 static int
-sprintint(char *s, int xx, int base, int sign)
+sprintint(char *s, int sz, int xx, int base, int sign)
 {
   char buf[16];
   int i, n;
@@ -39,7 +39,7 @@ sprintint(char *s, int xx, int base, int sign)
     buf[i++] = '-';
 
   n = 0;
-  while(--i >= 0)
+  while(--i >= 0 && n < sz)
     n += sputc(s+n, buf[i]);
   return n;
 }
@@ -66,10 +66,10 @@ snprintf(char *buf, int sz, char *fmt, ...)
       break;
     switch(c){
     case 'd':
-      off += sprintint(buf+off, va_arg(ap, int), 10, 1);
+      off += sprintint(buf+off, sz - off, va_arg(ap, int), 10, 1);
       break;
     case 'x':
-      off += sprintint(buf+off, va_arg(ap, int), 16, 1);
+      off += sprintint(buf+off, sz - off, va_arg(ap, int), 16, 1);
       break;
     case 's':
       if((s = va_arg(ap, char*)) == 0)
