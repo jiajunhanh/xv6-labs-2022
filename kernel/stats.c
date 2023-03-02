@@ -17,7 +17,6 @@ static struct {
   int off;
 } stats;
 
-int statscopyin(char*, int);
 int statslock(char*, int);
   
 int
@@ -34,12 +33,7 @@ statsread(int user_dst, uint64 dst, int n)
   acquire(&stats.lock);
 
   if(stats.sz == 0) {
-#ifdef LAB_PGTBL
-    stats.sz = statscopyin(stats.buf, BUFSZ);
-#endif
-#ifdef LAB_ALL
     stats.sz = statslock(stats.buf, BUFSZ);
-#endif
   }
   m = stats.sz - stats.off;
 

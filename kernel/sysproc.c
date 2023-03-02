@@ -73,7 +73,6 @@ sys_sleep(void)
 }
 
 
-#ifdef LAB_ALL
 uint64
 sys_pgaccess(void)
 {
@@ -103,7 +102,6 @@ sys_pgaccess(void)
 
   return 0;
 }
-#endif
 
 uint64
 sys_kill(void)

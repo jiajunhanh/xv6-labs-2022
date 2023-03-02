@@ -25,16 +25,12 @@ int sleep(int);
 int uptime(void);
 int trace(int);
 int sysinfo(struct sysinfo*);
-#ifdef LAB_ALL
 int connect(uint32, uint16, uint16);
-#endif
-#ifdef LAB_ALL
 int pgaccess(void *, int, void *);
-// usyscall region
-int ugetpid(void);
-#endif
 int sigalarm(int, void (*)());
 int sigreturn(void);
+// usyscall region
+int ugetpid(void);
 
 // ulib.c
 int stat(const char*, struct stat*);

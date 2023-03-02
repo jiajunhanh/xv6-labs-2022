@@ -504,8 +504,6 @@ sys_pipe(void)
   return 0;
 }
 
-
-#ifdef LAB_ALL
 int
 sys_connect(void)
 {
@@ -528,4 +526,3 @@ sys_connect(void)
 
   return fd;
 }
-#endif

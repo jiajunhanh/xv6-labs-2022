@@ -103,12 +103,8 @@ extern uint64 sys_mkdir(void);
 extern uint64 sys_close(void);
 extern uint64 sys_trace(void);
 extern uint64 sys_sysinfo(void);
-#ifdef LAB_ALL
 extern uint64 sys_connect(void);
-#endif
-#ifdef LAB_ALL
 extern uint64 sys_pgaccess(void);
-#endif
 extern uint64 sys_sigalarm(void);
 extern uint64 sys_sigreturn(void);
 
@@ -136,12 +132,8 @@ static uint64 (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
-#ifdef LAB_ALL
 [SYS_connect] sys_connect,
-#endif
-#ifdef LAB_ALL
 [SYS_pgaccess] sys_pgaccess,
-#endif
 [SYS_trace]   sys_trace,
 [SYS_sysinfo] sys_sysinfo,
 [SYS_sigalarm] sys_sigalarm,
@@ -172,12 +164,8 @@ static char* syscall_names[] = {
 [SYS_close]   = "close",
 [SYS_trace]   = "trace",
 [SYS_sysinfo] = "sysinfo",
-#ifdef LAB_ALL
 [SYS_connect] = "connect",
-#endif
-#ifdef LAB_ALL
 [SYS_pgaccess] = "pgaccess",
-#endif
 [SYS_sigalarm] = "sigalarm",
 [SYS_sigreturn] = "sigreturn",
 };

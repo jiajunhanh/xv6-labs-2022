@@ -25,9 +25,7 @@
 #define VIRTIO0 0x10001000
 #define VIRTIO0_IRQ 1
 
-#ifdef LAB_ALL
 #define E1000_IRQ 33
-#endif
 
 // core local interruptor (CLINT), which contains the timer.
 #define CLINT 0x2000000L
@@ -70,10 +68,4 @@
 //   TRAPFRAME (p->trapframe, used by the trampoline)
 //   TRAMPOLINE (the same page as in the kernel)
 #define TRAPFRAME (TRAMPOLINE - PGSIZE)
-#ifdef LAB_ALL
 #define USYSCALL (TRAPFRAME - PGSIZE)
-
-struct usyscall {
-  int pid;  // Process ID
-};
-#endif

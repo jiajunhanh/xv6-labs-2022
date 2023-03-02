@@ -1,10 +1,9 @@
 #include "kernel/types.h"
 #include "kernel/stat.h"
 #include "kernel/fcntl.h"
-#ifdef LAB_ALL
 #include "kernel/riscv.h"
 #include "kernel/memlayout.h"
-#endif
+#include "kernel/usyscall.h"
 #include "user/user.h"
 
 
@@ -151,11 +150,9 @@ memcpy(void *dst, const void *src, uint n)
   return memmove(dst, src, n);
 }
 
-#ifdef LAB_ALL
 int
 ugetpid(void)
 {
   struct usyscall *u = (struct usyscall *)USYSCALL;
   return u->pid;
 }
-#endif

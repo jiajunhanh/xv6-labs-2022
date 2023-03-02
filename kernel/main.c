@@ -12,9 +12,7 @@ main()
 {
   if(cpuid() == 0){
     consoleinit();
-#if defined(LAB_ALL)
     statsinit();
-#endif
     printfinit();
     printf("\n");
     printf("xv6 kernel is booting\n");
@@ -31,10 +29,8 @@ main()
     iinit();         // inode table
     fileinit();      // file table
     virtio_disk_init(); // emulated hard disk
-#ifdef LAB_ALL
     pci_init();
     sockinit();
-#endif
     userinit();      // first user process
 #ifdef KCSAN
     kcsaninit();
