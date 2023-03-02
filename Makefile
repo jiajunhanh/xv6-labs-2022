@@ -306,13 +306,13 @@ grade:
 	@echo $(MAKE) clean
 	@$(MAKE) clean || \
           (echo "'make clean' failed.  HINT: Do you have another running instance of xv6?" && exit 1)
+	./grade-lab-net $(GRADEFLAGS)
 	./grade-lab-util $(GRADEFLAGS)
 	./grade-lab-syscall $(GRADEFLAGS)
 	./grade-lab-pgtbl $(GRADEFLAGS)
 	./grade-lab-traps $(GRADEFLAGS)
 	./grade-lab-cow $(GRADEFLAGS)
 	./grade-lab-thread $(GRADEFLAGS)
-	./grade-lab-net $(GRADEFLAGS)
 	./grade-lab-lock $(GRADEFLAGS)
 
 ##
