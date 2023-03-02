@@ -107,6 +107,7 @@ extern uint64 sys_connect(void);
 extern uint64 sys_pgaccess(void);
 extern uint64 sys_sigalarm(void);
 extern uint64 sys_sigreturn(void);
+extern uint64 sys_symlink(void);
 
 // An array mapping syscall numbers from syscall.h
 // to the function that handles the system call.
@@ -128,16 +129,17 @@ static uint64 (*syscalls[])(void) = {
 [SYS_open]    sys_open,
 [SYS_write]   sys_write,
 [SYS_mknod]   sys_mknod,
-[SYS_unlink]  sys_unlink,
-[SYS_link]    sys_link,
-[SYS_mkdir]   sys_mkdir,
-[SYS_close]   sys_close,
-[SYS_connect] sys_connect,
-[SYS_pgaccess] sys_pgaccess,
-[SYS_trace]   sys_trace,
-[SYS_sysinfo] sys_sysinfo,
-[SYS_sigalarm] sys_sigalarm,
-[SYS_sigreturn] sys_sigreturn,
+    [SYS_unlink] sys_unlink,
+    [SYS_link] sys_link,
+    [SYS_mkdir] sys_mkdir,
+    [SYS_close] sys_close,
+    [SYS_connect] sys_connect,
+    [SYS_pgaccess] sys_pgaccess,
+    [SYS_trace] sys_trace,
+    [SYS_sysinfo] sys_sysinfo,
+    [SYS_sigalarm] sys_sigalarm,
+    [SYS_sigreturn] sys_sigreturn,
+    [SYS_symlink] sys_symlink,
 };
 
 static char* syscall_names[] = {
@@ -158,16 +160,17 @@ static char* syscall_names[] = {
 [SYS_open]    = "open",
 [SYS_write]   = "write",
 [SYS_mknod]   = "mknod",
-[SYS_unlink]  = "unlink",
-[SYS_link]    = "link",
-[SYS_mkdir]   = "mkdir",
-[SYS_close]   = "close",
-[SYS_trace]   = "trace",
-[SYS_sysinfo] = "sysinfo",
-[SYS_connect] = "connect",
-[SYS_pgaccess] = "pgaccess",
-[SYS_sigalarm] = "sigalarm",
-[SYS_sigreturn] = "sigreturn",
+    [SYS_unlink] = "unlink",
+    [SYS_link] = "link",
+    [SYS_mkdir] = "mkdir",
+    [SYS_close] = "close",
+    [SYS_trace] = "trace",
+    [SYS_sysinfo] = "sysinfo",
+    [SYS_connect] = "connect",
+    [SYS_pgaccess] = "pgaccess",
+    [SYS_sigalarm] = "sigalarm",
+    [SYS_sigreturn] = "sigreturn",
+    [SYS_symlink] = "symlink",
 };
 
 

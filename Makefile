@@ -181,6 +181,7 @@ UPROGS=\
 	$U/_sh\
 	$U/_sleep\
 	$U/_stressfs\
+	$U/_symlinktest\
 	$U/_sysinfotest\
 	$U/_trace\
 	$U/_usertests\
@@ -314,6 +315,7 @@ grade:
 	./grade-lab-cow $(GRADEFLAGS)
 	./grade-lab-thread $(GRADEFLAGS)
 	./grade-lab-lock $(GRADEFLAGS)
+	@echo "Lab 'fs' was not tested since it takes too much time. Test it manually with './grade-lab-fs -v'."
 
 ##
 ## FOR web handin

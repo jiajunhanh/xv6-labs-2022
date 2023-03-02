@@ -292,7 +292,7 @@ create(char *path, short type, short major, short minor)
 
   return ip;
 
- fail:
+fail:
   // something went wrong. de-allocate ip.
   ip->nlink = 0;
   iupdate(ip);
@@ -301,9 +301,28 @@ create(char *path, short type, short major, short minor)
   return 0;
 }
 
+struct inode *open_symlink(char *target, int depth) {
+  if (depth > 10) {
+    return 0;
+  }
+
+  struct inode *ip = namei(target);
+  if (ip == 0) {
+    return 0;
+  }
+
+  ilock(ip);
+  if (ip->type != T_SYMLINK) {
+    return ip;
+  }
+
+  readi(ip, 0, (uint64) target, 0, MAXPATH * sizeof(char));
+  iunlockput(ip);
+  return open_symlink(target, depth + 1);
+}
+
 uint64
-sys_open(void)
-{
+sys_open(void) {
   char path[MAXPATH];
   int fd, omode;
   struct file *f;
@@ -328,21 +347,32 @@ sys_open(void)
       return -1;
     }
     ilock(ip);
-    if(ip->type == T_DIR && omode != O_RDONLY){
+    if (ip->type == T_DIR && omode != O_RDONLY) {
       iunlockput(ip);
       end_op();
       return -1;
     }
   }
 
-  if(ip->type == T_DEVICE && (ip->major < 0 || ip->major >= NDEV)){
+  if (ip->type == T_SYMLINK && !(omode & O_NOFOLLOW)) {
+    char target[MAXPATH];
+    readi(ip, 0, (uint64) target, 0, sizeof(target));
+    iunlockput(ip);
+    ip = open_symlink(target, 0);
+    if (ip == 0) {
+      end_op();
+      return -1;
+    }
+  }
+
+  if (ip->type == T_DEVICE && (ip->major < 0 || ip->major >= NDEV)) {
     iunlockput(ip);
     end_op();
     return -1;
   }
 
-  if((f = filealloc()) == 0 || (fd = fdalloc(f)) < 0){
-    if(f)
+  if ((f = filealloc()) == 0 || (fd = fdalloc(f)) < 0) {
+    if (f)
       fileclose(f);
     iunlockput(ip);
     end_op();
@@ -525,4 +555,30 @@ sys_connect(void)
   }
 
   return fd;
+}
+
+uint64 sys_symlink() {
+  char target[MAXPATH];
+  char path[MAXPATH];
+  if (argstr(0, target, MAXPATH) < 0) {
+    return -1;
+  }
+  if (argstr(1, path, MAXPATH) < 0) {
+    return -1;
+  }
+
+  begin_op();
+
+  struct inode *inode_path = create(path, T_SYMLINK, 0, 0);
+  if (inode_path == 0) {
+    end_op();
+    return -1;
+  }
+
+  writei(inode_path, 0, (uint64) target, 0, sizeof(target));
+  iunlockput(inode_path);
+
+  end_op();
+
+  return 0;
 }

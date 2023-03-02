@@ -29,6 +29,7 @@ int connect(uint32, uint16, uint16);
 int pgaccess(void *, int, void *);
 int sigalarm(int, void (*)());
 int sigreturn(void);
+int symlink(char *, char *);
 // usyscall region
 int ugetpid(void);
 
